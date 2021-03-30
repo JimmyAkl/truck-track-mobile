@@ -4,7 +4,7 @@ import footer from '../assets/footer.png';
 
 const Footer = () => {
   return (
-    <View>
+    <View style= {{backgroundColor: '#fff'}}>
       <Image source={footer} style={styles.footer} />
     </View>
   )

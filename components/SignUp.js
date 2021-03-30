@@ -6,21 +6,30 @@ import { TouchableOpacity, KeyboardAvoidingView, Image } from 'react-native';
 import Footer from './Footer';
 import logo from '../assets/logo.png';
 
-
-const SignUp = ({ history }) => {
+const SignUp = ({ navigation }) => {
+  navigation.setOptions({
+    headerRight: () => (
+      <TouchableOpacity >
+        <Text style={styles.text}>about us</Text>
+      </TouchableOpacity>
+    ),
+    headerTitle: () => (
+      <TouchableOpacity onPress={() => navigation.push('Contact')}>
+        <Text style={styles.text}>contact us</Text>
+      </TouchableOpacity>
+    ),
+    headerRightContainerStyle: {
+      paddingRight: 10
+    },
+    headerTitleContainerStyle: {
+      paddingLeft: 140
+    },
+    headerLeftContainerStyle: {
+      paddingLeft: 10
+    }
+  });
   return (
-    <View behavior="position" >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => history.goBack()}>
-          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.item1}>
-          <Text style={styles.text}>about us</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.item2} onPress={() => history.push('/contactus')}>
-          <Text style={styles.text}>contact us</Text>
-        </TouchableOpacity>
-      </View>
+    <View behavior="position" style={{ backgroundColor: '#fff' }} >
       <Text
         style={styles.title}>Create Account</Text>
 
@@ -49,7 +58,7 @@ const SignUp = ({ history }) => {
       >Already have a account ?
       </Text>
 
-      <TouchableOpacity onPress={() => history.push('/signin')}>
+      <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
         <Text
           style={styles.login}
         >Login</Text>
@@ -60,28 +69,6 @@ const SignUp = ({ history }) => {
 }
 
 const styles = StyleSheet.create({
-
-  header: {
-    height: 150,
-    paddingLeft: 20,
-    marginTop: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  },
-  item1: {
-    paddingLeft: 110
-  },
-  item2: {
-    paddingLeft: 20
-  },
-  text: {
-    color: '#0E0B6E',
-    fontFamily: 'Cochin',
-    fontSize: 13,
-    textTransform: 'uppercase',
-  },
-
   title: {
     color: "#0E0B6E",
     fontSize: 35,
@@ -126,6 +113,12 @@ const styles = StyleSheet.create({
     marginLeft: 280,
     color: '#FE7568',
     marginTop: -20
+  },
+  text: {
+    color: '#0E0B6E',
+    fontFamily: 'Cochin',
+    fontSize: 13,
+    textTransform: 'uppercase',
   }
 });
 

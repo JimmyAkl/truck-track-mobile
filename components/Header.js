@@ -5,20 +5,32 @@ import addbtn from '../assets/Addbtn.png';
 import profile from '../assets/profile.png';
 import ShipmentDetails from './ShipmentDetails';
 
-const Header = ({ history }) => {
-    return (
-        <ScrollView showsVerticalScrollIndicator={false}> 
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => history.push('/')}>
-                    <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.item1}>
-                    <Image source={addbtn} style={{ width: 50, height: 50, resizeMode: 'stretch' }} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.item2}>
+const Header = ({ navigation }) => {
+    navigation.setOptions({
+        headerLeft:() => (
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+              <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+          </TouchableOpacity>
+        ),
+        headerRight:() => (
+            <TouchableOpacity>
+                <Image source={addbtn} style={{ width: 50, height: 50, resizeMode: 'stretch' }} />
+            </TouchableOpacity>
+        ),
+        headerTitle:() => (
+            <TouchableOpacity>
                     <Image source={profile} style={{ width: 25, height: 25, resizeMode: 'stretch' }} />
-                </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+        ),
+        headerTitleContainerStyle: {
+            paddingLeft: 250
+        },
+      headerLeftContainerStyle: {
+          paddingLeft: 10
+      }
+      });
+    return (
+        <ScrollView showsVerticalScrollIndicator={false} style= {{backgroundColor: '#fff'}}> 
             <Text style={styles.lineStyle}>Current Shipments</Text>
             <ShipmentDetails/>
             <ShipmentDetails/>

@@ -1,6 +1,6 @@
 import { setStatusBarHidden, StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView, ScrollView, Image } from 'react-native';
@@ -8,10 +8,17 @@ import phone from '../assets/phone.png';
 import email from '../assets/email.png';
 import location from '../assets/location.png';
 import footer from '../assets/footer.png';
+import logo from '../assets/logo.png';
 
-const Contactus = () => {
+const Contactus = ({navigation}) => {
+  navigation.setOptions({
+    headerLeft:() => (
+      <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+      </TouchableOpacity>
+  )
+  });
   return (
-
     <SafeAreaView behavior="position" >
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} >
 
