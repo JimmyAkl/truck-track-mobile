@@ -10,16 +10,18 @@ import location from '../assets/location.png';
 import footer from '../assets/footer.png';
 import logo from '../assets/logo.png';
 
-const Contactus = ({navigation}) => {
+const Contactus = ({ navigation }) => {
+  setTimeout(()=>{
   navigation.setOptions({
-    headerLeft:() => (
-      <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+    headerLeft: () => (
+      <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+        <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
       </TouchableOpacity>
-  )
+    )
   });
+},0);
   return (
-    <SafeAreaView behavior="position" >
+    <SafeAreaView  >
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} >
 
         <Text
@@ -53,11 +55,11 @@ const styles = StyleSheet.create({
     color: "#0E0B6E",
     fontSize: 35,
     marginLeft: 30,
-    marginTop: 190
+    marginTop: 60
   },
   scrollView: {
     backgroundColor: 'white',
-    marginHorizontal: 20,
+ 
 
   },
   contact: {

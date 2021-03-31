@@ -1,39 +1,41 @@
 import React from 'react';
-import { ScrollView,Image, StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { ScrollView, Image, StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import logo from '../assets/logo.png';
 import addbtn from '../assets/Addbtn.png';
 import profile from '../assets/profile.png';
 import ShipmentDetails from './ShipmentDetails';
 
 const Header = ({ navigation }) => {
+    setTimeout(()=>{
     navigation.setOptions({
-        headerLeft:() => (
-          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-              <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
-          </TouchableOpacity>
+        headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+                <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+            </TouchableOpacity>
         ),
-        headerRight:() => (
+        headerRight: () => (
             <TouchableOpacity>
                 <Image source={addbtn} style={{ width: 50, height: 50, resizeMode: 'stretch' }} />
             </TouchableOpacity>
         ),
-        headerTitle:() => (
+        headerTitle: () => (
             <TouchableOpacity>
-                    <Image source={profile} style={{ width: 25, height: 25, resizeMode: 'stretch' }} />
+                <Image source={profile} style={{ width: 25, height: 25, resizeMode: 'stretch' }} />
             </TouchableOpacity>
         ),
         headerTitleContainerStyle: {
             paddingLeft: 250
         },
-      headerLeftContainerStyle: {
-          paddingLeft: 10
-      }
-      });
+        headerLeftContainerStyle: {
+            paddingLeft: 10
+        }
+    });
+},0);
     return (
-        <ScrollView showsVerticalScrollIndicator={false} style= {{backgroundColor: '#fff'}}> 
+        <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
             <Text style={styles.lineStyle}>Current Shipments</Text>
-            <ShipmentDetails/>
-            <ShipmentDetails/>
+            <ShipmentDetails />
+            <ShipmentDetails />
         </ScrollView>
     )
 }

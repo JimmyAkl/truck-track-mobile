@@ -7,7 +7,13 @@ import Footer from './Footer';
 import logo from '../assets/logo.png';
 
 const SignUp = ({ navigation }) => {
+  setTimeout(()=>{
   navigation.setOptions({
+    headerLeft: () => (
+      <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+        <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+      </TouchableOpacity>
+    ),
     headerRight: () => (
       <TouchableOpacity >
         <Text style={styles.text}>about us</Text>
@@ -23,11 +29,9 @@ const SignUp = ({ navigation }) => {
     },
     headerTitleContainerStyle: {
       paddingLeft: 140
-    },
-    headerLeftContainerStyle: {
-      paddingLeft: 10
     }
   });
+},0);
   return (
     <View behavior="position" style={{ backgroundColor: '#fff' }} >
       <Text

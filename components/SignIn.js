@@ -7,30 +7,32 @@ import Footer from './Footer';
 import logo from '../assets/logo.png';
 
 const SignIn = ({ navigation }) => {
+  setTimeout(()=>{
   navigation.setOptions({
-    headerLeft:() => (
-      <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+    headerLeft: () => (
+      <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+        <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
       </TouchableOpacity>
-  ),headerRight: () => (
-    <TouchableOpacity >
-      <Text style={styles.text}>about us</Text>
-    </TouchableOpacity>
-  ),
-  headerTitle: () => (
-    <TouchableOpacity onPress={() => navigation.push('Contact')}>
-      <Text style={styles.text}>contact us</Text>
-    </TouchableOpacity>
-  ),
-  headerRightContainerStyle: {
-    paddingRight: 10
-  },
-  headerTitleContainerStyle: {
-    paddingLeft: 140
-  }
-});
+    ), headerRight: () => (
+      <TouchableOpacity >
+        <Text style={styles.text}>about us</Text>
+      </TouchableOpacity>
+    ),
+    headerTitle: () => (
+      <TouchableOpacity onPress={() => navigation.push('Contact')}>
+        <Text style={styles.text}>contact us</Text>
+      </TouchableOpacity>
+    ),
+    headerRightContainerStyle: {
+      paddingRight: 10
+    },
+    headerTitleContainerStyle: {
+      paddingLeft: 140
+    }
+  });
+},0);
   return (
-    <View behavior="position" style= {{backgroundColor: '#fff'}} >
+    <View behavior="position" style={{ backgroundColor: '#fff' }} >
       <Text
         style={styles.title}>Welcome Back!</Text>
 
@@ -60,7 +62,7 @@ const SignIn = ({ navigation }) => {
       >New here?
       </Text>
 
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.push('SignUp')}>
         <Text
           style={styles.create}
         >Create Account</Text>
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
     marginLeft: 200,
     color: '#FE7568',
     marginTop: -18
-  },text: {
+  }, text: {
     color: '#0E0B6E',
     fontFamily: 'Cochin',
     fontSize: 13,
