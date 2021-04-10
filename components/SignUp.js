@@ -5,35 +5,67 @@ import { Button, TextInput } from 'react-native-paper';
 import { TouchableOpacity, KeyboardAvoidingView, Image } from 'react-native';
 import Footer from './Footer';
 import logo from '../assets/logo.png';
+import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 const SignUp = ({ navigation }) => {
-  setTimeout(()=>{
-  navigation.setOptions({
-    headerLeft: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
-        <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
-      </TouchableOpacity>
-    ),
-    headerRight: () => (
-      <TouchableOpacity >
-        <Text style={styles.text}>about us</Text>
-      </TouchableOpacity>
-    ),
-    headerTitle: () => (
-      <TouchableOpacity onPress={() => navigation.push('Contact')}>
-        <Text style={styles.text}>contact us</Text>
-      </TouchableOpacity>
-    ),
-    headerRightContainerStyle: {
-      paddingRight: 10
-    },
-    headerTitleContainerStyle: {
-      paddingLeft: 140
-    }
-  });
-},0);
+  const [username, setusername] = useState('');
+  const [password, setpassword] = useState('');
+  const [admin, setadmin] = useState(true);
+
+  const signup = () => {
+    let data = {
+      username,
+      password,
+      admin
+    };
+    console.log(data);
+    axios.post('https://trucktrackserver.herokuapp.com/users/signup', data, {headers:{"Content-Type" : "application/json"}})
+    .then((res) => res.data)
+    .then((data) => {
+      console.log(data);
+      if (data.success) {
+        setusername('');
+        setpassword('');
+        navigation.navigate('SignIn');
+      }
+      else {
+        alert(res.status);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+
+  setTimeout(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.push('About')}>
+          <Text style={styles.text}>about us</Text>
+        </TouchableOpacity>
+      ),
+      headerTitle: () => (
+        <TouchableOpacity onPress={() => navigation.push('Contact')}>
+          <Text style={styles.text}>contact us</Text>
+        </TouchableOpacity>
+      ),
+      headerRightContainerStyle: {
+        paddingRight: 10
+      },
+      headerTitleContainerStyle: {
+        paddingLeft: 140
+      }
+    });
+  }, 0);
+  
   return (
-    <View behavior="position" style={{ backgroundColor: '#fff' }} >
+    <View behavior="position" style={{ backgroundColor: '#fff', flex:1 }} >
       <Text
         style={styles.title}>Create Account</Text>
 
@@ -41,6 +73,8 @@ const SignUp = ({ navigation }) => {
         label='Email'
         style={styles.email}
         theme={{ colors: { primary: "blue" } }}
+        value={username || ''}
+        onChangeText={(username) => setusername(username)}
       />
 
       <TextInput
@@ -49,11 +83,14 @@ const SignUp = ({ navigation }) => {
         style={styles.password}
         theme={{ colors: { primary: "blue" } }}
         underlineColorAndroid="transparent"
+        value={password || ''}
+        onChangeText={(password) => setpassword(password)}
       />
 
       <Button
         mode="contained"
-        style={styles.create}>
+        style={styles.create}
+        onPress={signup}>
         Create Account
       </Button>
 

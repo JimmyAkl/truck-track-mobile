@@ -2,37 +2,93 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { TouchableOpacity, KeyboardAvoidingView, Image } from 'react-native';
+import { TouchableOpacity, KeyboardAvoidingView, Image, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Footer from './Footer';
 import logo from '../assets/logo.png';
+import axios from 'axios';
+
 
 const SignIn = ({ navigation }) => {
-  setTimeout(()=>{
-  navigation.setOptions({
-    headerLeft: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
-        <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
-      </TouchableOpacity>
-    ), headerRight: () => (
-      <TouchableOpacity >
-        <Text style={styles.text}>about us</Text>
-      </TouchableOpacity>
-    ),
-    headerTitle: () => (
-      <TouchableOpacity onPress={() => navigation.push('Contact')}>
-        <Text style={styles.text}>contact us</Text>
-      </TouchableOpacity>
-    ),
-    headerRightContainerStyle: {
-      paddingRight: 10
-    },
-    headerTitleContainerStyle: {
-      paddingLeft: 140
+  const [isLoading, setIsLoading] = useState(true);
+  const [username, setusername] = useState('');
+  const [password, setpassword] = useState('');
+
+  const token = AsyncStorage.getItem('token');
+  token.then(function(value) {
+    if (value != null) {
+    navigation.navigate('Header');
     }
   });
-},0);
+  
+  const login = async () => {
+    setIsLoading(true);
+    let data = {
+      username,
+      password
+    };
+    console.log(data);
+    axios.post('https://trucktrackserver.herokuapp.com/users/login', data, {headers:{"Content-Type" : "application/json"}})
+    .then((res) => res.data)
+    .then((data) => {
+      console.log(data);
+      if (data.success) {
+        setusername('');
+        setpassword('');
+        navigation.navigate('Header');
+        AsyncStorage.setItem('token', data.token); 
+      }
+      else {
+        alert(res.status);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+    setIsLoading(false); 
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  if (isLoading) {
+    return(
+      <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+        <ActivityIndicator size='large'/>
+      </View>
+    );
+  }
+
+  setTimeout(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+        </TouchableOpacity>
+      ), headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.push('About')}>
+          <Text style={styles.text}>about us</Text>
+        </TouchableOpacity>
+      ),
+      headerTitle: () => (
+        <TouchableOpacity onPress={() => navigation.push('Contact')}>
+          <Text style={styles.text}>contact us</Text>
+        </TouchableOpacity>
+      ),
+      headerRightContainerStyle: {
+        paddingRight: 10
+      },
+      headerTitleContainerStyle: {
+        paddingLeft: 140
+      }
+    });
+  }, 0);
+
   return (
-    <View behavior="position" style={{ backgroundColor: '#fff' }} >
+    <View behavior="position" style={{ backgroundColor: '#fff', flex:1 }} >
       <Text
         style={styles.title}>Welcome Back!</Text>
 
@@ -40,8 +96,8 @@ const SignIn = ({ navigation }) => {
         label='Email'
         style={styles.email}
         theme={{ colors: { primary: "blue" } }}
-
-
+        value={username || ''}
+        onChangeText={(username) => setusername(username)}
       />
       <TextInput
         label='Password'
@@ -49,11 +105,14 @@ const SignIn = ({ navigation }) => {
         style={styles.password}
         theme={{ colors: { primary: "blue" } }}
         underlineColorAndroid="transparent"
-
+        value={password || ''}
+        onChangeText={(password) => setpassword(password)}
       />
       <Button onPress={() => navigation.push('Header')}
         mode="contained"
-        style={styles.login}>
+        style={styles.login}
+        onPress={login}
+      >
         Log In
       </Button>
 

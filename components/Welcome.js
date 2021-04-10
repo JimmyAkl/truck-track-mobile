@@ -5,8 +5,13 @@ import { Button } from 'react-native-paper';
 
 
 const Welcome = ({ navigation }) => {
+    setTimeout(() => {
+        navigation.setOptions({
+            headerShown: false
+        });
+    }, 0);
     return (
-        <View style={{ backgroundColor: '#fff' }}>
+        <View style={{ backgroundColor: '#fff', flex:1 }}>
             <Text style={styles.truck} > Welcome To Truck Track</Text>
             <Text style={styles.slogan} >Delivering happiness to you </Text>
             <Image source={wlc} style={styles.wlc} />
@@ -43,7 +48,7 @@ const styles = StyleSheet.create({
         color: "#0E0B6E",
         fontSize: 25,
         marginLeft: 48,
-        marginTop: 10,
+        marginTop: 200,
         fontWeight: 'bold'
     },
     slogan: {

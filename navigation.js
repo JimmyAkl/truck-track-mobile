@@ -8,6 +8,7 @@ import SignIn from './components/SignIn';
 import Header from './components/Header';
 import Contact from './components/Contactus';
 import Welcome from './components/Welcome';
+import About from './components/Aboutus';
 
 import logo from './assets/logo.png';
 
@@ -34,11 +35,12 @@ const HomeScreen = () => {
                 }
             }}
         >
-            <NavigatorStack.Screen name="Welcome" component={Welcome} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
-            <NavigatorStack.Screen name="SignUp" component={SignUp} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
             <NavigatorStack.Screen name="SignIn" component={SignIn} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
             <NavigatorStack.Screen name="Header" component={Header} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
+            <NavigatorStack.Screen name="Welcome" component={Welcome} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
+            <NavigatorStack.Screen name="SignUp" component={SignUp} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
             <NavigatorStack.Screen name="Contact" component={Contact} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
+            <NavigatorStack.Screen name="About" component={About} options={{ gestureEnabled: false, swipeEnabled: false, animationEnabled: false, }} />
         </NavigatorStack.Navigator>
     );
 }

@@ -1,28 +1,41 @@
-import { setStatusBarHidden, StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-
-import { Button, TextInput } from 'react-native-paper';
+import Footer from './Footer';
 import { SafeAreaView, ScrollView, Image } from 'react-native';
+
 import phone from '../assets/phone.png';
 import email from '../assets/email.png';
 import location from '../assets/location.png';
-import footer from '../assets/footer.png';
 import logo from '../assets/logo.png';
 
 const Contactus = ({ navigation }) => {
-  setTimeout(()=>{
-  navigation.setOptions({
-    headerLeft: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
-        <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
-      </TouchableOpacity>
-    )
-  });
-},0);
+  setTimeout(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+          <Image source={logo} style={{ width: 100, height: 50, resizeMode: 'stretch' }} />
+        </TouchableOpacity>
+      ), headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.push('About')}>
+          <Text style={styles.text}>about us</Text>
+        </TouchableOpacity>
+      ),
+      headerTitle: () => (
+        <TouchableOpacity>
+          <Text style={styles.text}>contact us</Text>
+        </TouchableOpacity>
+      ),
+      headerRightContainerStyle: {
+        paddingRight: 10
+      },
+      headerTitleContainerStyle: {
+        paddingLeft: 140
+      }
+    });
+  }, 0);
   return (
-    <SafeAreaView  >
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} >
+    <View style={{ backgroundColor: '#fff', flex:1 }} >
+      <View style={styles.scrollView} >
 
         <Text
           style={styles.title}>Let's Get In Touch</Text>
@@ -40,13 +53,9 @@ const Contactus = ({ navigation }) => {
 
         <Text style={styles.location}>Hazmieh,Beirut Lebanon</Text>
         <Image source={location} style={styles.locationpic} />
-
-
-        <Image source={footer} style={styles.footer} />
-
-      </ScrollView>
-    </SafeAreaView>
-
+      </View>
+      <Footer/>
+    </View>
 
   );
 };
@@ -59,8 +68,12 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     backgroundColor: 'white',
- 
-
+  },
+  text: {
+    color: '#0E0B6E',
+    fontFamily: 'Cochin',
+    fontSize: 13,
+    textTransform: 'uppercase',
   },
   contact: {
     color: "#414667",
@@ -82,21 +95,17 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     marginLeft: 30,
   },
-
   number: {
     color: '#0E0B6E',
     fontSize: 20,
     marginLeft: 100,
     marginTop: 35
-  }
-  ,
+  },
   email: {
     color: '#0E0B6E',
     fontSize: 20,
     marginLeft: 100,
     marginTop: 40
-
-
   },
   location: {
     color: '#0E0B6E',
@@ -117,7 +126,6 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginTop: -40
   },
-
 });
 
 export default Contactus;
