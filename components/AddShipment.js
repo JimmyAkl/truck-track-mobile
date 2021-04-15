@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, Modal, Image } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import moment from 'moment';
 import DatePicker from "react-native-modal-datetime-picker";
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import Map from './map';
+import location from '../assets/location.png';
 
 export default function AddShipment(props) {
   const [Tok, setToken] = useState('');
@@ -15,8 +17,8 @@ export default function AddShipment(props) {
   const [supervisoremail, setsupervisoremail] = useState('');
   const [clientemail, setclientemail] = useState('');
   const [clientnumber, setclientnumber] = useState('');
-  const [startlocation, setstartloaction] = useState('mans');
-  const [endlocation, setendlocation] = useState('zahle');
+  const [startlocation, setstartlocation] = useState('Invalid Location');
+  const [endlocation, setendlocation] = useState('Invalid Location');
   const [DepDate, setDepDate] = useState('');
   const [ArrDate, setArrDate] = useState('');
   const [status, setstatus] = useState('');
@@ -26,10 +28,14 @@ export default function AddShipment(props) {
   const [vibrationlowest, setvibrationlowest] = useState('');
   const [humidityhighest, sethumidityhighest] = useState('');
   const [humiditylowest, sethumiditylowest] = useState('');
+  const [latlngdep, setlatlngdep] = useState('');
+  const [latlngarr, setlatlngarr] = useState('');
 
   const [ArrOrDep, setArrOrDep] = useState('');
   const [chosenDate, setchosenDate] = useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   useEffect(() => {
     const token = AsyncStorage.getItem('token');
@@ -57,30 +63,30 @@ export default function AddShipment(props) {
     };
     console.log(data);
     axios.post('https://trucktrackserver.herokuapp.com/shipments', data, { headers: { 'Authorization': `Bearer ${Tok}`, "Content-Type": "application/json" } })
-    .then((res) => res.data)
-    .then((data) => {
-      console.log(data);
-      if(data) {
-        setID('');
-        settitle('');
-        settemperaturehighest('');
-        setvibrationhighest('');
-        sethumidityhighest('');
-        settemperaturelowest('');
-        setvibrationlowest('');
-        sethumiditylowest('');
-        setclientemail('');
-        setsupervisornumber('');
-        setclientnumber('');
-        setsupervisoremail('');
-        setArrDate('');
-        setDepDate('');
-        props.setmodal(false);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      .then((res) => res.data)
+      .then((data) => {
+        console.log(data);
+        if (data) {
+          setID('');
+          settitle('');
+          settemperaturehighest('');
+          setvibrationhighest('');
+          sethumidityhighest('');
+          settemperaturelowest('');
+          setvibrationlowest('');
+          sethumiditylowest('');
+          setclientemail('');
+          setsupervisornumber('');
+          setclientnumber('');
+          setsupervisoremail('');
+          setArrDate('');
+          setDepDate('');
+          props.setmodal(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   const showDatePickerDep = () => {
@@ -105,7 +111,7 @@ export default function AddShipment(props) {
   useEffect(() => {
     if (ArrOrDep == 'Dep') setDepDate(chosenDate);
     if (ArrOrDep == 'Arr') {
-      if(chosenDate > DepDate) setArrDate(chosenDate);
+      if (chosenDate > DepDate) setArrDate(chosenDate);
     }
   }, [chosenDate]);
 
@@ -113,33 +119,47 @@ export default function AddShipment(props) {
     <SafeAreaView >
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} >
         <View behavior="position">
-        <DatePicker
-          isVisible={isDatePickerVisible}
-          mode={'datetime'}
-          timeIntervals={30}
-          minimumDate = {new Date()}
-          timeCaption="time"
-          onConfirm={handleConfirm}
-          onCancel={hideDatePicker}
-          
-        />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Map setModalVisible={setModalVisible} setlatlngdep={setlatlngdep} setlatlngarr={setlatlngarr} setstartlocation={setstartlocation} setendlocation={setendlocation} />
+              </View>
+            </View>
+          </Modal >
+          <DatePicker
+            isVisible={isDatePickerVisible}
+            mode={'datetime'}
+            timeIntervals={30}
+            minimumDate={new Date()}
+            timeCaption="time"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+
+          />
 
 
           <TextInput
             label='Shipment ID'
             style={styles.id}
             underlineColorAndroid="transparent"
-            theme={{ colors: { primary: "blue" } }} 
+            theme={{ colors: { primary: "blue" } }}
             value={ID || ''}
-            onChangeText={(ID) => setID(ID)}/>
+            onChangeText={(ID) => setID(ID)} />
 
           <TextInput
             label='Shipment Title '
             style={styles.titleship}
             underlineColorAndroid="transparent"
-            theme={{ colors: { primary: "blue" } }} 
+            theme={{ colors: { primary: "blue" } }}
             value={title || ''}
-            onChangeText={(title) => settitle(title)}/>
+            onChangeText={(title) => settitle(title)} />
 
 
           <View>
@@ -148,22 +168,33 @@ export default function AddShipment(props) {
             </Text>
             <TouchableOpacity style={styles.item1} onPress={showDatePickerDep}>
               <Text
-                style={styles.depart}>Set departure info</Text>
+                style={styles.depart}>Set departure time</Text>
             </TouchableOpacity>
             <Text style={styles.date}>
               {moment(DepDate).format('DD-MM-YYYY  HH:mm')}
-            </Text>  
+            </Text>
+            <Text style={styles.date}>
+              {startlocation}
+            </Text>
             <Text style={styles.arrival}>
               Arrival
             </Text>
 
             <TouchableOpacity style={styles.item2} onPress={showDatePickerArr}>
               <Text
-                style={styles.arrive}>Set arrival info</Text>
+                style={styles.arrive}>Set arrival time</Text>
             </TouchableOpacity>
             <Text style={styles.date}>
               {moment(ArrDate).format('DD-MM-YYYY  HH:mm')}
             </Text>
+            <Text style={styles.date}>
+              {endlocation}
+            </Text>
+            <TouchableOpacity style={styles.item2} onPress={() => {setModalVisible(!modalVisible)}}>
+              <Text
+                style={styles.location}>Set location</Text>
+                <Image source={location} style={styles.locationpic} />
+            </TouchableOpacity>
           </View>
 
           <View>
@@ -183,9 +214,9 @@ export default function AddShipment(props) {
                     label='mV/g'
                     style={styles.vibvalue}
                     underlineColorAndroid="transparent"
-                    theme={{ colors: { primary: "blue" } }} 
+                    theme={{ colors: { primary: "blue" } }}
                     value={vibrationlowest || ''}
-                    onChangeText={(vibrationlowest) => setvibrationlowest(vibrationlowest)}/>
+                    onChangeText={(vibrationlowest) => setvibrationlowest(vibrationlowest)} />
                   <View>
                     <Text style={styles.highest}>
                       Highest
@@ -194,9 +225,9 @@ export default function AddShipment(props) {
                       label='mV/g'
                       style={styles.vibhigh}
                       underlineColorAndroid="transparent"
-                      theme={{ colors: { primary: "blue" } }} 
+                      theme={{ colors: { primary: "blue" } }}
                       value={vibrationhighest || ''}
-                      onChangeText={(vibrationhighest) => setvibrationhighest(vibrationhighest)}/>
+                      onChangeText={(vibrationhighest) => setvibrationhighest(vibrationhighest)} />
 
                   </View>
 
@@ -215,9 +246,9 @@ export default function AddShipment(props) {
                     label='°C'
                     style={styles.vibvalue}
                     underlineColorAndroid="transparent"
-                    theme={{ colors: { primary: "blue" } }} 
+                    theme={{ colors: { primary: "blue" } }}
                     value={temperaturelowest || ''}
-                      onChangeText={(temperaturelowest) => settemperaturelowest(temperaturelowest)}/>
+                    onChangeText={(temperaturelowest) => settemperaturelowest(temperaturelowest)} />
                   <View>
                     <Text style={styles.highest}>
                       Highest
@@ -226,9 +257,9 @@ export default function AddShipment(props) {
                       label='°C'
                       style={styles.vibhigh}
                       underlineColorAndroid="transparent"
-                      theme={{ colors: { primary: "blue" } }} 
+                      theme={{ colors: { primary: "blue" } }}
                       value={temperaturehighest || ''}
-                      onChangeText={(temperaturehighest) => settemperaturehighest(temperaturehighest)}/>
+                      onChangeText={(temperaturehighest) => settemperaturehighest(temperaturehighest)} />
 
                   </View>
 
@@ -247,9 +278,9 @@ export default function AddShipment(props) {
                     label='%'
                     style={styles.vibvalue}
                     underlineColorAndroid="transparent"
-                    theme={{ colors: { primary: "blue" } }} 
+                    theme={{ colors: { primary: "blue" } }}
                     value={humiditylowest || ''}
-                      onChangeText={(humiditylowest) => sethumiditylowest(humiditylowest)}/>
+                    onChangeText={(humiditylowest) => sethumiditylowest(humiditylowest)} />
                   <View>
                     <Text style={styles.highest}>
                       Highest
@@ -258,9 +289,9 @@ export default function AddShipment(props) {
                       label='%'
                       style={styles.vibhigh}
                       underlineColorAndroid="transparent"
-                      theme={{ colors: { primary: "blue" } }} 
+                      theme={{ colors: { primary: "blue" } }}
                       value={humidityhighest || ''}
-                      onChangeText={(humidityhighest) => sethumidityhighest(humidityhighest)}/>
+                      onChangeText={(humidityhighest) => sethumidityhighest(humidityhighest)} />
 
                   </View>
                 </View>
@@ -284,15 +315,15 @@ export default function AddShipment(props) {
                 underlineColorAndroid="transparent"
                 theme={{ colors: { primary: "blue" } }}
                 value={supervisoremail || ''}
-                onChangeText={(supervisoremail) => setsupervisoremail(supervisoremail)}/>
+                onChangeText={(supervisoremail) => setsupervisoremail(supervisoremail)} />
 
               <TextInput
                 label='Phone Number'
                 style={styles.phone}
                 underlineColorAndroid="transparent"
-                theme={{ colors: { primary: "blue" } }} 
+                theme={{ colors: { primary: "blue" } }}
                 value={supervisornumber || ''}
-                onChangeText={(supervisornumber) => setsupervisornumber(supervisornumber)}/>
+                onChangeText={(supervisornumber) => setsupervisornumber(supervisornumber)} />
             </View>
 
             <View>
@@ -304,17 +335,17 @@ export default function AddShipment(props) {
                 style={styles.email}
 
                 underlineColorAndroid="transparent"
-                theme={{ colors: { primary: "blue" } }} 
+                theme={{ colors: { primary: "blue" } }}
                 value={clientemail || ''}
-                onChangeText={(clientemail) => setclientemail(clientemail)}/>
+                onChangeText={(clientemail) => setclientemail(clientemail)} />
               <TextInput
                 label='Phone Number'
                 style={styles.phone}
 
                 underlineColorAndroid="transparent"
-                theme={{ colors: { primary: "blue" } }} 
+                theme={{ colors: { primary: "blue" } }}
                 value={clientnumber || ''}
-                onChangeText={(clientnumber) => setclientnumber(clientnumber)}/>
+                onChangeText={(clientnumber) => setclientnumber(clientnumber)} />
             </View>
 
 
@@ -325,7 +356,7 @@ export default function AddShipment(props) {
             style={styles.submit}
             onPress={submit}>
             Submit Shipment
-      </Button>
+          </Button>
 
 
         </View>
@@ -463,7 +494,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30
   },
   titleship: {
-
     marginLeft: 30,
     marginRight: 30,
     marginTop: 30,
@@ -497,12 +527,43 @@ const styles = StyleSheet.create({
     marginLeft: 64,
     marginTop: -20
   },
+  location: {
+    color: '#FE7568',
+    marginTop: 20,
+    marginLeft:20,
+  },
   scrollView: {
-    marginBottom:50
+    marginBottom: 50
   },
   date: {
     marginLeft: 42,
     marginTop: 5,
     fontStyle: 'italic'
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 18
+  },
+  modalView: {
+    margin: 30,
+    height: 700,
+    width: 370,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    }
+  },
+  locationpic: {
+    width: 25, height: 25,
+    resizeMode: 'stretch',
+    marginLeft: 100,
+    marginTop: -20
   }
 });
