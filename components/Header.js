@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Image, StyleSheet, Text, View, Button, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { ScrollView, Image, StyleSheet, LayoutAnimation,Text, View, Button, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import logo from '../assets/logo.png';
 import addbtn from '../assets/Addbtn.png';
@@ -8,32 +8,59 @@ import exit from '../assets/exit.png';
 import axios from 'axios';
 import ShipmentDetails from './ShipmentDetails';
 import AddShipment from './AddShipment';
+import moment from 'moment';
 
 const Header = ({ navigation }) => {
     const [Tok, setToken] = React.useState('');
     const [modalVisible, setModalVisible] = React.useState(false);
     const [shipments, setshipments] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [expanded, setexpanded] = React.useState(false);
+    const [dropdown, setdropdown] = React.useState(false);
+    const [selectedcategory, setselectedcategory] = React.useState("Current Shipments");
+    const [complaint, setcomplaint] = React.useState(false);
+
+    const changeLayout = () => {
+        setdropdown(!dropdown);
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setexpanded(!expanded);
+    }
 
     React.useEffect(() => {
+        setIsLoading(true);
         const token = AsyncStorage.getItem('token');
         token.then(function (value) { 
             setToken(value);
             axios.get('https://trucktrackserver.herokuapp.com/shipments', { headers: { 'Authorization': `Bearer ${value}`, "Content-Type": "application/json" } })
             .then((res) => res.data)
             .then((data) => {
-                console.log(data);
                 setshipments(data);
             })
             .catch((error) => {
                 console.error(error);
             });
-        })
-    }, [modalVisible]);
+        });
+        setIsLoading(false);
+    }, [modalVisible, selectedcategory]);
 
-    const shipmentdetailArr = [];
+    var shipmentdetailArr = [];
+    const shipmentPrevious = [];
+    const shipmentCurrent = [];
+    const shipmentUpcoming =[];
+
     for (let i = 0; i < shipments.length; i++) {
-        shipmentdetailArr.push(<ShipmentDetails {...shipments[i]} />);
+        if (moment(shipments[i].DepDate).format('DD-MM-YYYY') < moment(new Date()).format('DD-MM-YYYY'))
+            shipmentPrevious.push(<ShipmentDetails key = {shipments[i].ID} {...shipments[i]} />);
+        if (moment(shipments[i].DepDate).format('DD-MM-YYYY') > moment(new Date()).format('DD-MM-YYYY'))
+            shipmentUpcoming.push(<ShipmentDetails key = {shipments[i].ID} {...shipments[i]} />);
+        if (moment(shipments[i].DepDate).format('DD-MM-YYYY') == moment(new Date()).format('DD-MM-YYYY'))
+            shipmentCurrent.push(<ShipmentDetails key = {shipments[i].ID} {...shipments[i]} />);
     }
+
+    if (selectedcategory == "Previous Shipments") shipmentdetailArr = shipmentPrevious;
+    if (selectedcategory == "Upcoming Shipments") shipmentdetailArr = shipmentUpcoming;
+    if (selectedcategory == "Current Shipments") shipmentdetailArr = shipmentCurrent;
+
 
     const logout = async () => {
         axios.get('https://trucktrackserver.herokuapp.com/users/logout', { headers: { 'Authorization': `Bearer ${Tok}`, "Content-Type": "application/json" } })
@@ -71,9 +98,59 @@ const Header = ({ navigation }) => {
         });
     }, 0);
 
+    React.useEffect(() => {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 4000);
+      }, []);
+
+    if (isLoading) {
+        return(
+          <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+            <ActivityIndicator size='large'/>
+          </View>
+        );
+    }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
-            <Text style={styles.lineStyle}>Current Shipments</Text>
+            
+            <TouchableOpacity onPress={changeLayout}>
+                <Text style={styles.lineStyle}>{selectedcategory}</Text>
+                {/* <Image source={btn2} style={{width: 23, height: 15,marginLeft: 320,marginTop: -20,
+                      transform: [{ rotate: dropdown? '180deg' : '0deg'}]}} /> */}
+
+            </TouchableOpacity>
+            <View style={{ height: expanded ? null : 0, overflow: 'hidden' }}>
+                <TouchableOpacity 
+                    onPress={() => {setselectedcategory("Previous Shipments");changeLayout();}}
+                >
+                    <Text 
+                        style={[selectedcategory == "Previous Shipments" ? styles.lineStylePressed : styles.lineStyle]}
+                    >
+                        Previous Shipments
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => {setselectedcategory("Current Shipments");changeLayout();}}
+                >
+                        <Text 
+                            style={[selectedcategory == "Current Shipments" ? styles.lineStylePressed : styles.lineStyle]}
+                        >
+                            Current Shipments
+                        </Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => {setselectedcategory("Upcoming Shipments");changeLayout();}}
+                >
+                    <Text 
+                        style= {[selectedcategory == "Upcoming Shipments" ? styles.lineStylePressed : styles.lineStyle]}
+                    >
+                        Upcoming Shipments
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            
             {shipmentdetailArr}
             <View style={styles.centeredView}>
                 <Modal
@@ -123,6 +200,15 @@ const styles = StyleSheet.create({
         height: 50,
         paddingTop: 10,
         backgroundColor: '#0E0B6E',
+        color: 'white',
+        fontSize: 25,
+        fontWeight: '900',
+        textAlign: 'center'
+    },
+    lineStylePressed: {
+        height: 50,
+        paddingTop: 10,
+        backgroundColor: '#6864de',
         color: 'white',
         fontSize: 25,
         fontWeight: '900',

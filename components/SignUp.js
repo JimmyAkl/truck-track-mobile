@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { TouchableOpacity, KeyboardAvoidingView, Image } from 'react-native';
+import { TouchableOpacity, KeyboardAvoidingView, Image, ActivityIndicator } from 'react-native';
 import Footer from './Footer';
 import logo from '../assets/logo.png';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -12,6 +12,7 @@ const SignUp = ({ navigation }) => {
   const [username, setusername] = useState('');
   const [password, setpassword] = useState('');
   const [admin, setadmin] = useState(true);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const signup = () => {
     let data = {
@@ -20,22 +21,22 @@ const SignUp = ({ navigation }) => {
       admin
     };
     console.log(data);
-    axios.post('https://trucktrackserver.herokuapp.com/users/signup', data, {headers:{"Content-Type" : "application/json"}})
-    .then((res) => res.data)
-    .then((data) => {
-      console.log(data);
-      if (data.success) {
-        setusername('');
-        setpassword('');
-        navigation.navigate('SignIn');
-      }
-      else {
-        alert(res.status);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+    axios.post('https://trucktrackserver.herokuapp.com/users/signup', data, { headers: { "Content-Type": "application/json" } })
+      .then((res) => res.data)
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          setusername('');
+          setpassword('');
+          navigation.navigate('SignIn');
+        }
+        else {
+          alert(res.status);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   setTimeout(() => {
@@ -63,9 +64,23 @@ const SignUp = ({ navigation }) => {
       }
     });
   }, 0);
-  
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size='large' />
+      </View>
+    );
+  }
+
   return (
-    <View behavior="position" style={{ backgroundColor: '#fff', flex:1 }} >
+    <View behavior="position" style={{ backgroundColor: '#fff', flex: 1 }} >
       <Text
         style={styles.title}>Create Account</Text>
 

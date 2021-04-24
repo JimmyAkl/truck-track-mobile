@@ -1,15 +1,30 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import wlc from '../assets/wlc.png';
 import { Button } from 'react-native-paper';
 
 
 const Welcome = ({ navigation }) => {
+    const [isLoading, setIsLoading] = React.useState(true);
     setTimeout(() => {
         navigation.setOptions({
             headerShown: false
         });
     }, 0);
+
+    React.useEffect(() => {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      }, []);
+
+    if (isLoading) {
+        return(
+          <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+            <ActivityIndicator size='large'/>
+          </View>
+        );
+      }
     return (
         <View style={{ backgroundColor: '#fff', flex:1 }}>
             <Text style={styles.truck} > Welcome To Truck Track</Text>

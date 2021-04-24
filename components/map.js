@@ -68,8 +68,8 @@ const map = (props) => {
 
     const confirm = async () => {
         props.setModalVisible(false);
-        props.setlatlngdep({lat1, long1});
-        props.setlatlngarr({lat2, long2});
+        props.setlatlngdep([lat1, long1]);
+        props.setlatlngarr([lat2, long2]);
         const apiUrl1 = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat1},${long1}&key=AIzaSyB3KTUmiBN2Us-YwmK0AAkCExMNP45iLN8`;
         const apiUrl2 = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat2},${long2}&key=AIzaSyB3KTUmiBN2Us-YwmK0AAkCExMNP45iLN8`;
         try {
@@ -127,12 +127,12 @@ const map = (props) => {
                     apikey='AIzaSyB3KTUmiBN2Us-YwmK0AAkCExMNP45iLN8'
                     origin={{
                         latitude: lat1,
-                        longitude: long1
+                        longitude: long1,
                     }}
 
                     destination={{
-                        latitude: lat2,
-                        longitude: long2
+                        latitude: lat2 || lat1,
+                        longitude: long2 || long1,
                     }}
                     strokeWidth={3}
                     strokeColor={'#FE7568'}
@@ -145,7 +145,7 @@ const map = (props) => {
 
                     }}
                     onError={(errorMessage) => {
-                        console.log(`GOT AN ERROR: ${errorMessage}`);
+                        //console.log(`GOT AN ERROR: ${errorMessage}`);
                     }}
                 />
             </MapView>

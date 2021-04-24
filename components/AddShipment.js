@@ -28,10 +28,10 @@ export default function AddShipment(props) {
   const [vibrationlowest, setvibrationlowest] = useState('');
   const [humidityhighest, sethumidityhighest] = useState('');
   const [humiditylowest, sethumiditylowest] = useState('');
-  const [latlngdep, setlatlngdep] = useState('');
-  const [latlngarr, setlatlngarr] = useState('');
+  const [latlngdep, setlatlngdep] = useState([]);
+  const [latlngarr, setlatlngarr] = useState([]);
 
-  const [ArrOrDep, setArrOrDep] = useState('');
+  const [ArrOrDep, setArrOrDep] = useState(['']);
   const [chosenDate, setchosenDate] = useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -50,7 +50,9 @@ export default function AddShipment(props) {
       clientemail,
       clientnumber,
       startlocation,
+      latlngdep,
       endlocation,
+      latlngarr,
       DepDate,
       ArrDate,
       status,
